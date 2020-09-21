@@ -58,7 +58,7 @@ static struct rule {
     {"\\(", '('},
     {"\\)", ')'},
     {"[a-zA-Z_][a-zA-Z0-9_]*", TK_VAR},
-    {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi)", TK_REG},
+    {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi|pc)", TK_REG},
     {"&&", TK_AND},
     {"\\|\\|", TK_OR},
     {"!=", TK_NEQ},
@@ -149,6 +149,18 @@ static bool make_token(char *e) {
     }
   }
 
+  for (int i = 0; i < nr_token; ++i) {
+    bool prev_is_op = i == 0 || (tokens[i - 1].type < OP_END && tokens[i - 1].type != ')');
+    if (tokens[i].type == '*' && prev_is_op) {
+      tokens[i].type = TK_DEREF;
+    }
+    if (tokens[i].type == '-' && prev_is_op) {
+      tokens[i].type = TK_NEG;
+    }
+    if (tokens[i].type == '!' && prev_is_op) {
+      tokens[i].type = TK_NOT;
+    }
+  }
   return true;
 }
 
@@ -190,8 +202,12 @@ int64_t eval(int beg, int end, bool *success) {
         return strtol(tokens[beg].str, NULL, 0);
       }
       case TK_REG: {
-        uint32_t isa_reg_str2val(const char *, bool *);
-        uint32_t val = isa_reg_str2val(tokens[beg].str, NULL);
+        uint32_t val;
+        if (strcmp(tokens[beg].str, "$pc") == 0) {
+          val = cpu.pc;
+        } else {
+          val = isa_reg_str2val(tokens[beg].str + 1, NULL);
+        }
         return val;
       }
       default: {
@@ -295,27 +311,39 @@ int64_t eval(int beg, int end, bool *success) {
   }
 }
 
-uint32_t expr(char *e, bool *success) {
-  if (!make_token(e)) {
-    *success = false;
-    return 0;
+bool is_constant_expr_helper(char *e) {
+  make_token(e);
+
+  for (int i = 0; i < nr_token; ++i) {
+    if (tokens[i].type == TK_REG || tokens[i].type == TK_VAR || tokens[i].type == TK_DEREF) {
+      return false;
+    }
   }
 
-  /* TODO: Insert codes to evaluate the expression. */
+  return true;
+}
+
+bool is_constant_expr(char *e) {
+  bool b = is_constant_expr_helper(e);
   for (int i = 0; i < nr_token; ++i) {
-    bool prev_is_op = i == 0 || (tokens[i - 1].type < OP_END && tokens[i - 1].type != ')');
-    if (tokens[i].type == '*' && prev_is_op) {
-      tokens[i].type = TK_DEREF;
-    }
-    if (tokens[i].type == '-' && prev_is_op) {
-      tokens[i].type = TK_NEG;
-    }
-    if (tokens[i].type == '!' && prev_is_op) {
-      tokens[i].type = TK_NOT;
+    if (tokens[i].str != NULL) {
+      free(tokens[i].str);
     }
   }
-  *success = true;
-  uint32_t val = eval(0, nr_token - 1, success);
+  return b;
+}
+
+uint32_t expr(char *e, bool *success) {
+  uint32_t val;
+  if (!make_token(e)) {
+    *success = false;
+    val = 0;
+  } else {
+    /* TODO: Insert codes to evaluate the expression. */
+    *success = true;
+    val = eval(0, nr_token - 1, success);
+  }
+
   for (int i = 0; i < nr_token; ++i) {
     if (tokens[i].str != NULL) {
       free(tokens[i].str);

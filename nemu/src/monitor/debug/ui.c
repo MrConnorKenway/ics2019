@@ -71,10 +71,9 @@ static int cmd_info(char *args) {
   }
 
   if (strcmp(arg, "r") == 0) {
-    void isa_reg_display();
     isa_reg_display();
   } else if (strcmp(arg, "w") == 0) {
-
+    wp_info();
   } else {
     printf("Unknown argument: '%s'\n", arg);
   }
@@ -143,9 +142,49 @@ static int cmd_x(char *args) {
   return 0;
 }
 
-static int cmd_w(char *args) { return 0; }
+static int cmd_w(char *args) {
+  if (args == NULL) {
+    printf("Usage: w EXPR\n");
+    return 0;
+  }
 
-static int cmd_d(char *args) { return 0; }
+  bool success;
+  uint32_t val = expr(args, &success);
+  if (!success) {
+    return 0;
+  }
+
+  if (is_constant_expr(args)) {
+    printf("Cannot watch constant expression\n");
+    return 0;
+  }
+
+  WP *wp = new_wp();
+  wp->expr = (char *) malloc(strlen(args) + 1);
+  strcpy(wp->expr, args);
+  printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
+  wp->old_val = val;
+  return 0;
+}
+
+static int cmd_d(char *args) {
+  if (args == NULL) {
+    printf("Usage: d N\n");
+  }
+  char *arg = strtok(NULL, " ");
+  if (arg == NULL) {
+    printf("Usage: d N\n");
+  }
+
+  char *endptr;
+  long n = strtol(arg, &endptr, 0);
+  if (n < 0 || *endptr != 0 || errno == ERANGE) {
+    printf("Invalid argument: '%s'\n", arg);
+    return 0;
+  }
+  free_wp((int) n);
+  return 0;
+}
 
 static struct {
   char *name;
