@@ -149,7 +149,7 @@ static bool make_token(char *e) {
     }
   }
 
-  for (int i = 0; i < nr_token; ++i) {
+  for (i = 0; i < nr_token; ++i) {
     bool prev_is_op = i == 0 || (tokens[i - 1].type < OP_END && tokens[i - 1].type != ')');
     if (tokens[i].type == '*' && prev_is_op) {
       tokens[i].type = TK_DEREF;
@@ -226,7 +226,8 @@ int64_t eval(int beg, int end, bool *success) {
         return eval(beg + 1, end - 1, success);
       } else {
         // find main operator to split the whole expression
-        int op = -1, open_paren_cnt = 0, min_precedence = sizeof(precedence_table) / sizeof(int);
+        int op = -1, leftmost_unary_op = -1, open_paren_cnt = 0,
+            min_precedence = sizeof(precedence_table) / sizeof(int);
         bool in_paren = false;
         for (int i = beg; i <= end; ++i) {
           if (tokens[i].type == '(') {
@@ -240,9 +241,8 @@ int64_t eval(int beg, int end, bool *success) {
               if (precedence_table[l] == tokens[i].type) {
                 if (tokens[i].type > UNARY_OP_BEG) {
                   // unary operator is right associative, so we choose the leftmost operator as the main op
-                  if (l < min_precedence) {
-                    op = i;
-                    min_precedence = l;
+                  if (leftmost_unary_op == -1) {
+                    leftmost_unary_op = i;
                   }
                 } else {
                   // binary operator is left associative, so we choose the rightmost operator as the main op
@@ -254,6 +254,10 @@ int64_t eval(int beg, int end, bool *success) {
               }
             }
           }
+        }
+
+        if (op == -1) {
+          op = leftmost_unary_op;
         }
 
         Assert(op != -1, "Bad expression\n");
