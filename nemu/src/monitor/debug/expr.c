@@ -58,7 +58,7 @@ static struct rule {
     {"\\(", '('},
     {"\\)", ')'},
     {"[a-zA-Z_][a-zA-Z0-9_]*", TK_VAR},
-    {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi|pc)", TK_REG},
+    {"\\$(eax|ecx|edx|ebx|esp|ebp|esi|edi|eip)", TK_REG},
     {"&&", TK_AND},
     {"\\|\\|", TK_OR},
     {"!=", TK_NEQ},
@@ -203,7 +203,7 @@ int64_t eval(int beg, int end, bool *success) {
       }
       case TK_REG: {
         uint32_t val;
-        if (strcmp(tokens[beg].str, "$pc") == 0) {
+        if (strcmp(tokens[beg].str, "$eip") == 0) {
           val = cpu.pc;
         } else {
           val = isa_reg_str2val(tokens[beg].str + 1, NULL);
