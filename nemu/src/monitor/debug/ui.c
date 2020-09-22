@@ -117,23 +117,19 @@ static int cmd_x(char *args) {
     return 0;
   }
   bool success;
-  uint32_t ret = expr(arg, &success);
+  uint32_t addr = expr(arg, &success);
   if (!success) {
     return 0;
   }
-  if (ret >= PMEM_SIZE) {
-    printf("Cannot access memory at address 0x%08x\n", ret);
-    return 0;
-  }
-  uint32_t *addr = guest_to_host(ret);
+
   while (n > 0) {
-    printf("0x%08x:\t", host_to_guest(addr));
+    printf("0x%08x:\t", addr);
     for (int i = 0; i < 4 && n > 0; ++i) {
-      printf("0x%08x", *addr);
+      printf("0x%08x", vaddr_read(addr, 4));
       if (i < 3) {
         printf("\t");
       }
-      ++addr;
+      addr += 4;
       --n;
     }
     printf("\n");

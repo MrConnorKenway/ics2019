@@ -263,14 +263,8 @@ int64_t eval(int beg, int end, bool *success) {
         Assert(op != -1, "Bad expression\n");
 
         if (tokens[op].type == TK_DEREF) {
-          uint32_t ret = eval(op + 1, end, success);
-          if (ret >= PMEM_SIZE) {
-            printf("Cannot access memory at address 0x%08x\n", ret);
-            *success = false;
-            return 0;
-          }
-          uint32_t *addr = guest_to_host(ret);
-          return *addr;
+          uint32_t addr = eval(op + 1, end, success);
+          return vaddr_read(addr, 4);
         } else if (tokens[op].type == TK_NEG) {
           return -eval(op + 1, end, success);
         } else if (tokens[op].type == TK_NOT) {
