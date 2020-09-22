@@ -65,8 +65,8 @@ void cpu_exec(uint64_t n) {
 
     /* TODO: check watchpoints here. */
     if (check_wp()) {
-      nemu_state.state = NEMU_STOP;
       printf("NEMU stops at 0x%08x\n", cpu.pc);
+      break;
     }
 
 #ifdef HAS_IOE
