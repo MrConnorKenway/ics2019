@@ -97,16 +97,13 @@ make_EHelper(mul) {
   rtl_mul_lo(&s1, &id_dest->val, &s0);
 
   switch (id_dest->width) {
-    case 1:
-      rtl_sr(R_AX, &s1, 2);
+    case 1:rtl_sr(R_AX, &s1, 2);
       break;
-    case 2:
-      rtl_sr(R_AX, &s1, 2);
+    case 2:rtl_sr(R_AX, &s1, 2);
       rtl_shri(&s1, &s1, 16);
       rtl_sr(R_DX, &s1, 2);
       break;
-    case 4:
-      rtl_mul_hi(&s0, &id_dest->val, &s0);
+    case 4:rtl_mul_hi(&s0, &id_dest->val, &s0);
       rtl_sr(R_EDX, &s0, 4);
       rtl_sr(R_EAX, &s1, 4);
       break;
@@ -122,16 +119,13 @@ make_EHelper(imul1) {
   rtl_imul_lo(&s1, &id_dest->val, &s0);
 
   switch (id_dest->width) {
-    case 1:
-      rtl_sr(R_AX, &s1, 2);
+    case 1:rtl_sr(R_AX, &s1, 2);
       break;
-    case 2:
-      rtl_sr(R_AX, &s1, 2);
+    case 2:rtl_sr(R_AX, &s1, 2);
       rtl_shri(&s1, &s1, 16);
       rtl_sr(R_DX, &s1, 2);
       break;
-    case 4:
-      rtl_imul_hi(&s0, &id_dest->val, &s0);
+    case 4:rtl_imul_hi(&s0, &id_dest->val, &s0);
       rtl_sr(R_EDX, &s0, 4);
       rtl_sr(R_EAX, &s1, 4);
       break;
@@ -165,15 +159,13 @@ make_EHelper(imul3) {
 
 make_EHelper(div) {
   switch (id_dest->width) {
-    case 1:
-      rtl_lr(&s0, R_AX, 2);
+    case 1:rtl_lr(&s0, R_AX, 2);
       rtl_div_q(&s1, &s0, &id_dest->val);
       rtl_sr(R_AL, &s1, 1);
       rtl_div_r(&s1, &s0, &id_dest->val);
       rtl_sr(R_AH, &s1, 1);
       break;
-    case 2:
-      rtl_lr(&s0, R_AX, 2);
+    case 2:rtl_lr(&s0, R_AX, 2);
       rtl_lr(&s1, R_DX, 2);
       rtl_shli(&s1, &s1, 16);
       rtl_or(&s0, &s0, &s1);
@@ -182,8 +174,7 @@ make_EHelper(div) {
       rtl_div_r(&s1, &s0, &id_dest->val);
       rtl_sr(R_DX, &s1, 2);
       break;
-    case 4:
-      rtl_lr(&s0, R_EAX, 4);
+    case 4:rtl_lr(&s0, R_EAX, 4);
       rtl_lr(&s1, R_EDX, 4);
       rtl_div64_q(&cpu.eax, &s1, &s0, &id_dest->val);
       rtl_div64_r(&cpu.edx, &s1, &s0, &id_dest->val);
@@ -196,15 +187,13 @@ make_EHelper(div) {
 
 make_EHelper(idiv) {
   switch (id_dest->width) {
-    case 1:
-      rtl_lr(&s0, R_AX, 2);
+    case 1:rtl_lr(&s0, R_AX, 2);
       rtl_idiv_q(&s1, &s0, &id_dest->val);
       rtl_sr(R_AL, &s1, 1);
       rtl_idiv_r(&s1, &s0, &id_dest->val);
       rtl_sr(R_AH, &s1, 1);
       break;
-    case 2:
-      rtl_lr(&s0, R_AX, 2);
+    case 2:rtl_lr(&s0, R_AX, 2);
       rtl_lr(&s1, R_DX, 2);
       rtl_shli(&s1, &s1, 16);
       rtl_or(&s0, &s0, &s1);
@@ -213,8 +202,7 @@ make_EHelper(idiv) {
       rtl_idiv_r(&s1, &s0, &id_dest->val);
       rtl_sr(R_DX, &s1, 2);
       break;
-    case 4:
-      rtl_lr(&s0, R_EAX, 4);
+    case 4:rtl_lr(&s0, R_EAX, 4);
       rtl_lr(&s1, R_EDX, 4);
       rtl_idiv64_q(&cpu.eax, &s1, &s0, &id_dest->val);
       rtl_idiv64_r(&cpu.edx, &s1, &s0, &id_dest->val);
