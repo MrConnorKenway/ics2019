@@ -9,5 +9,6 @@ make_EHelper(xor);
 
 make_EHelper(operand_size);
 
+make_EHelper(ret);
 make_EHelper(inv);
 make_EHelper(nemu_trap);
