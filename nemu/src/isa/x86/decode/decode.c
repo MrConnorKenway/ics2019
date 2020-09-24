@@ -32,6 +32,10 @@ static inline make_DopHelper(SI) {
    op->simm = ???
    */
   op->simm = instr_fetch(pc, op->width);
+  if (op->width == 1) {
+    // sign extend simm
+    op->simm = (op->simm << 24) >> 24;
+  }
 
   rtl_li(&op->val, op->simm);
 

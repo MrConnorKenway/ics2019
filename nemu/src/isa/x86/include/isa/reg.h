@@ -38,6 +38,17 @@ typedef struct {
   };
 
   vaddr_t pc;
+  struct {
+    uint8_t CF: 1;
+    uint8_t : 5;
+    uint8_t ZF: 1;
+    uint8_t SF: 1;
+    uint8_t : 1;
+    uint8_t IF: 1;
+    uint8_t : 1;
+    uint8_t OF: 1;
+    uint32_t : 20;
+  } eflags;
 
 } CPU_state;
 
@@ -50,21 +61,17 @@ static inline int check_reg_index(int index) {
 #define reg_w(index) (cpu.gpr[check_reg_index(index)]._16)
 #define reg_b(index) (cpu.gpr[check_reg_index(index) & 0x3]._8[index >> 2])
 
-static inline const char* reg_name(int index, int width) {
-  extern const char* regsl[];
-  extern const char* regsw[];
-  extern const char* regsb[];
+static inline const char *reg_name(int index, int width) {
+  extern const char *regsl[];
+  extern const char *regsw[];
+  extern const char *regsb[];
   assert(index >= 0 && index < 8);
 
   switch (width) {
-    case 4:
-      return regsl[index];
-    case 1:
-      return regsb[index];
-    case 2:
-      return regsw[index];
-    default:
-      assert(0);
+    case 4:return regsl[index];
+    case 1:return regsb[index];
+    case 2:return regsw[index];
+    default:assert(0);
   }
 }
 
