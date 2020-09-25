@@ -24,5 +24,6 @@ make_EHelper(ret);
 make_EHelper(jcc);
 make_EHelper(leave);
 
+make_EHelper(nop);
 make_EHelper(inv);
 make_EHelper(nemu_trap);
