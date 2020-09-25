@@ -53,7 +53,16 @@ make_EHelper(cmp) {
 }
 
 make_EHelper(inc) {
-  TODO();
+  s1 = 1;
+  rtl_add(&s0, &id_dest->val, &s1);
+
+  rtl_update_ZFSF(&s0, id_dest->width);
+
+  // update OF
+  rtl_is_add_overflow(&s1, &s0, &id_dest->val, &s1, id_dest->width);
+  rtl_set_OF(&s1);
+
+  operand_write(id_dest, &s0);
 
   print_asm_template1(inc);
 }
