@@ -9,6 +9,8 @@ make_EHelper(xor);
 make_EHelper(lea);
 make_EHelper(and);
 
+make_EHelper(cmp);
+
 make_EHelper(operand_size);
 
 make_EHelper(ret);
