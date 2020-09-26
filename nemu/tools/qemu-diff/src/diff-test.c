@@ -56,7 +56,8 @@ void difftest_init(void) {
       assert(0);
     }
 
-    close(STDIN_FILENO);
+    // qemu will get an assertion failure when using close(STDIN_FILENO)
+    freopen("/dev/null", "r", stdin);
     execlp(ISA_QEMU_BIN, ISA_QEMU_BIN, ISA_QEMU_ARGS "-S", "-s", "-nographic", NULL);
     perror("exec");
     assert(0);

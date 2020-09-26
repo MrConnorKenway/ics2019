@@ -46,7 +46,9 @@ void cpu_exec(uint64_t n) {
     __attribute__((unused)) vaddr_t seq_pc = exec_once();
 
 #if defined(DIFF_TEST)
-    difftest_step(ori_pc, cpu.pc);
+    if (nemu_state.state != NEMU_ABORT) {
+      difftest_step(ori_pc, cpu.pc);
+    }
 #endif
 
 #ifdef DEBUG
