@@ -2,7 +2,7 @@
 #include "cc.h"
 
 make_EHelper(test) {
-  s0 = 0;
+  rtl_li(&s0, 0);
   rtl_set_CF(&s0);
   rtl_set_OF(&s0);
 
@@ -14,7 +14,7 @@ make_EHelper(test) {
 }
 
 make_EHelper(and) {
-  s0 = 0;
+  rtl_li(&s0, 0);
   rtl_set_CF(&s0);
   rtl_set_OF(&s0);
 
@@ -28,7 +28,7 @@ make_EHelper(and) {
 }
 
 make_EHelper(xor) {
-  s0 = 0;
+  rtl_li(&s0, 0);
   rtl_set_CF(&s0);
   rtl_set_OF(&s0);
 
@@ -42,7 +42,7 @@ make_EHelper(xor) {
 }
 
 make_EHelper(or) {
-  s0 = 0;
+  rtl_li(&s0, 0);
   rtl_set_CF(&s0);
   rtl_set_OF(&s0);
 

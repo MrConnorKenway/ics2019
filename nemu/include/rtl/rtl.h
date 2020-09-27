@@ -6,7 +6,7 @@
 #include "rtl/relop.h"
 #include "rtl/rtl-wrapper.h"
 
-extern rtlreg_t s0, s1, t0, t1, ir;
+extern rtlreg_t s0, s1, s2, t0, t1, ir;
 
 void decinfo_set_jmp(bool is_jmp);
 bool interpret_relop(uint32_t relop, const rtlreg_t src1, const rtlreg_t src2);
@@ -137,13 +137,22 @@ void interpret_rtl_exit(int state, vaddr_t halt_pc, uint32_t halt_ret);
 
 static inline void rtl_not(rtlreg_t *dest, const rtlreg_t *src1) {
   // dest <- ~src1
-  TODO();
+  rtl_xori(dest, src1, 0xffffffff);
 }
 
 static inline void rtl_sext(rtlreg_t *dest, const rtlreg_t *src1, int width) {
   // dest <- signext(src1[(width * 8 - 1) .. 0])
-  uint8_t offset = (4 - width) * 8;
-  *dest = (((int32_t) *src1) << offset) >> offset;
+  switch (width) {
+    case 4:rtl_mv(dest, src1);
+      return;
+    case 1:rtl_shli(dest, src1, 24);
+      rtl_sari(dest, dest, 24);
+      return;
+    case 2:rtl_shli(dest, src1, 16);
+      rtl_sari(dest, dest, 16);
+      return;
+    default:assert(0);
+  }
 }
 
 static inline void rtl_setrelopi(uint32_t relop, rtlreg_t *dest,
@@ -154,7 +163,16 @@ static inline void rtl_setrelopi(uint32_t relop, rtlreg_t *dest,
 
 static inline void rtl_msb(rtlreg_t *dest, const rtlreg_t *src1, int width) {
   // dest <- src1[width * 8 - 1]
-  TODO();
+  switch (width) {
+    case 4:rtl_shri(dest, src1, 31);
+      break;
+    case 1:rtl_shri(dest, src1, 7);
+      break;
+    case 2:rtl_shri(dest, src1, 15);
+      break;
+    default:assert(0);
+  }
+  rtl_andi(dest, dest, 1);
 }
 
 static inline void rtl_mux(rtlreg_t *dest, const rtlreg_t *cond, const rtlreg_t *src1, const rtlreg_t *src2) {

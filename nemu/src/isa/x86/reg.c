@@ -45,11 +45,11 @@ void isa_reg_display() {
   for (i = R_EAX; i <= R_EDI; i++) {
     printf("%s\t0x%08x\t%d\n", regsl[i], reg_l(i), reg_l(i));
   }
-  printf("CF\t%d\n", cpu.eflags.CF);
-  printf("OF\t%d\n", cpu.eflags.OF);
-  printf("ZF\t%d\n", cpu.eflags.ZF);
-  printf("SF\t%d\n", cpu.eflags.SF);
-  printf("IF\t%d\n", cpu.eflags.IF);
+  printf("CF\t%d\n", cpu.CF);
+  printf("OF\t%d\n", cpu.OF);
+  printf("ZF\t%d\n", cpu.ZF);
+  printf("SF\t%d\n", cpu.SF);
+  printf("IF\t%d\n", cpu.IF);
   printf("eip\t0x%08x\t%d\n", cpu.pc, cpu.pc);
 }
 

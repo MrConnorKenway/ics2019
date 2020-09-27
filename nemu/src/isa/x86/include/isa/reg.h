@@ -16,6 +16,8 @@ enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
  * For more details about the register encoding scheme, see i386 manual.
  */
 
+#define flag_mask 0xac1u
+
 typedef struct {
   // anonymous union
   union {
@@ -38,17 +40,20 @@ typedef struct {
   };
 
   vaddr_t pc;
-  struct {
-    uint8_t CF: 1;
-    uint8_t : 5;
-    uint8_t ZF: 1;
-    uint8_t SF: 1;
-    uint8_t : 1;
-    uint8_t IF: 1;
-    uint8_t : 1;
-    uint8_t OF: 1;
-    uint32_t : 20;
-  } eflags;
+  union {
+    struct {
+      uint8_t CF: 1;
+      uint8_t : 5;
+      uint8_t ZF: 1;
+      uint8_t SF: 1;
+      uint8_t : 1;
+      uint8_t IF: 1;
+      uint8_t : 1;
+      uint8_t OF: 1;
+      uint32_t : 20;
+    };
+    uint32_t eflags;
+  };
 
 } CPU_state;
 

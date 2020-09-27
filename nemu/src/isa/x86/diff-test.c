@@ -8,19 +8,7 @@ bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
     }
   }
 
-  if (ref_r->eflags.CF != cpu.eflags.CF) {
-    return false;
-  }
-  if (ref_r->eflags.OF != cpu.eflags.OF) {
-    return false;
-  }
-  if (ref_r->eflags.ZF != cpu.eflags.ZF) {
-    return false;
-  }
-  if (ref_r->eflags.SF != cpu.eflags.SF) {
-    return false;
-  }
-  if (ref_r->eflags.IF != cpu.eflags.IF) {
+  if ((ref_r->eflags & flag_mask) != (cpu.eflags & flag_mask)) {
     return false;
   }
 
