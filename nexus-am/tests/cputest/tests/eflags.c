@@ -40,6 +40,7 @@ int main() {
 
   asm("mov $0, %cl");
   asm("sar %cl, %eax");
+  asm("shl %cl, %eax");
 
   return 0;
 }
