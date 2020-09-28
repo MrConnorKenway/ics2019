@@ -17,6 +17,8 @@ make_EHelper(sub);
 
 make_EHelper(imul2);
 
+make_EHelper(idiv);
+
 make_EHelper(xor);
 make_EHelper(and);
 make_EHelper(or);

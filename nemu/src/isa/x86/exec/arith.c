@@ -294,5 +294,7 @@ make_EHelper(idiv) {
     default: assert(0);
   }
 
+  flag_mask = if_mask;
+
   print_asm_template1(idiv);
 }
