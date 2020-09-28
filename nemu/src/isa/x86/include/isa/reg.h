@@ -16,7 +16,12 @@ enum { R_AL, R_CL, R_DL, R_BL, R_AH, R_CH, R_DH, R_BH };
  * For more details about the register encoding scheme, see i386 manual.
  */
 
-#define flag_mask 0xac1u
+extern const uint32_t cf_mask;
+extern const uint32_t zf_mask;
+extern const uint32_t sf_mask;
+extern const uint32_t if_mask;
+extern const uint32_t of_mask;
+extern uint32_t flag_mask;
 
 typedef struct {
   // anonymous union

@@ -177,7 +177,15 @@ static inline void rtl_msb(rtlreg_t *dest, const rtlreg_t *src1, int width) {
 
 static inline void rtl_mux(rtlreg_t *dest, const rtlreg_t *cond, const rtlreg_t *src1, const rtlreg_t *src2) {
   // dest <- (cond ? src1 : src2)
-  TODO();
+  assert(*cond == 1 || *cond == 0);
+  rtl_shli(&t0, cond, 31);
+  rtl_sari(&t0, &t0, 31);
+  rtl_not(&t1, &t0);
+  rtl_li(dest, 0);
+  rtl_and(&t0, &t0, src1);
+  rtl_or(dest, dest, &t0);
+  rtl_and(&t1, &t1, src2);
+  rtl_or(dest, dest, &t1);
 }
 
 #include "isa/rtl.h"

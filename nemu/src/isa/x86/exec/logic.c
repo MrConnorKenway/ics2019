@@ -56,8 +56,22 @@ make_EHelper(or) {
 }
 
 make_EHelper(sar) {
-  TODO();
+  rtl_get_SF(&s2);
+  rtl_shli(&s2, &s2, id_dest->width * 8 - 1);
+  rtl_get_ZF(&s1);
+  rtl_xori(&s1, &s1, 1);
+  rtl_or(&s2, &s2, &s1);
+
+  rtl_sar(&s0, &id_dest->val, &id_src->val);
+
   // unnecessary to update CF and OF in NEMU
+  flag_mask &= (~cf_mask) & (~of_mask);
+
+  rtl_setrelopi(RELOP_EQ, &s1, &id_src->val, 0);
+  rtl_mux(&s2, &s1, &s2, &s0);
+  rtl_update_ZFSF(&s2, id_dest->width);
+
+  operand_write(id_dest, &s0);
 
   print_asm_template2(sar);
 }

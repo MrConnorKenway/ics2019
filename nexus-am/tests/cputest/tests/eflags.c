@@ -37,5 +37,9 @@ int main() {
   asm("inc %ax");
   asm("mov $0xffffffff, %eax");
   asm("inc %ax");
+
+  asm("mov $0, %cl");
+  asm("sar %cl, %eax");
+
   return 0;
 }
