@@ -204,8 +204,28 @@ make_EHelper(imul2) {
   rtl_sext(&s0, &id_src->val, id_src->width);
   rtl_sext(&s1, &id_dest->val, id_dest->width);
 
-  rtl_imul_lo(&s0, &s1, &s0);
-  operand_write(id_dest, &s0);
+  rtl_imul_lo(&s2, &s1, &s0);
+  operand_write(id_dest, &s2);
+
+  switch (id_dest->width) {
+    case 4: {
+      rtl_imul_hi(&s1, &s1, &s0);
+      rtl_sari(&s0, &s2, 31);
+      rtl_setrelop(RELOP_NE, &s2, &s0, &s1);
+      break;
+    }
+    case 2: {
+      rtl_sext(&s1, &s2, 2);
+      rtl_setrelop(RELOP_NE, &s2, &s1, &s2);
+      break;
+    }
+    default:assert(0);
+  }
+
+  rtl_set_CF(&s2);
+  rtl_set_OF(&s2);
+
+  flag_mask &= (~sf_mask) & (~zf_mask);
 
   print_asm_template2(imul);
 }
