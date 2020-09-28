@@ -38,6 +38,7 @@ make_EHelper(operand_size);
 make_EHelper(call);
 make_EHelper(ret);
 make_EHelper(jcc);
+make_EHelper(jmp);
 make_EHelper(leave);
 
 make_EHelper(nop);
