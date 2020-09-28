@@ -66,9 +66,16 @@ make_EHelper(cwtl) {
 
 make_EHelper(movsx) {
   id_dest->width = decinfo.isa.is_operand_size_16 ? 2 : 4;
+#ifdef DEBUG
+  snprintf(id_dest->str, OP_STR_SIZE, "%%%s", reg_name(id_dest->reg, id_dest->width));
+#endif
   rtl_sext(&s0, &id_src->val, id_src->width);
   operand_write(id_dest, &s0);
-  print_asm_template2(movsx);
+  if (id_src->width == 1) {
+    print_asm_template2(movsb);
+  } else {
+    print_asm_template2(movsw);
+  }
 }
 
 make_EHelper(movzx) {
