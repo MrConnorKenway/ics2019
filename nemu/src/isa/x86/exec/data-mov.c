@@ -38,11 +38,16 @@ make_EHelper(leave) {
 }
 
 make_EHelper(cltd) {
+  rtl_setrelopi(RELOP_LT, &s0, &id_dest->val, 0);
+  rtl_li(&s2, 0);
   if (decinfo.isa.is_operand_size_16) {
-    TODO();
-  }
-  else {
-    TODO();
+    rtl_li(&s1, 0xffff);
+    rtl_mux(&s0, &s0, &s1, &s2);
+    rtl_sr(R_EDX, &s0, 2);
+  } else {
+    rtl_li(&s1, 0xffffffff);
+    rtl_mux(&s0, &s0, &s1, &s2);
+    rtl_sr(R_EDX, &s0, 4);
   }
 
   print_asm(decinfo.isa.is_operand_size_16 ? "cwtl" : "cltd");
