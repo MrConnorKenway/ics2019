@@ -15,7 +15,11 @@ void rtl_setcc(rtlreg_t *dest, uint8_t subcode) {
   // dest <- ( cc is satisfied ? 1 : 0)
   switch (subcode & 0xe) {
     case CC_O:
-    case CC_B:
+    case CC_B: {
+      rtl_get_CF(&t0);
+      rtl_mv(dest, &t0);
+      break;
+    }
     case CC_E: {
       rtl_get_ZF(&t0);
       rtl_setrelopi(RELOP_EQ, dest, &t0, 1);
