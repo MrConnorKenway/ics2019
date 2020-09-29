@@ -14,7 +14,9 @@ void rtl_setcc(rtlreg_t *dest, uint8_t subcode) {
   // TODO: Query EFLAGS to determine whether the condition code is satisfied.
   // dest <- ( cc is satisfied ? 1 : 0)
   switch (subcode & 0xe) {
-    case CC_O:
+    case CC_O: {
+      TODO();
+    }
     case CC_B: {
       rtl_get_CF(&t0);
       rtl_mv(dest, &t0);
@@ -31,7 +33,9 @@ void rtl_setcc(rtlreg_t *dest, uint8_t subcode) {
       rtl_or(dest, &t0, &t1);
       break;
     }
-    case CC_S:
+    case CC_S: {
+      TODO();
+    }
     case CC_L: {
       rtl_get_SF(&t0);
       rtl_get_OF(&t1);
