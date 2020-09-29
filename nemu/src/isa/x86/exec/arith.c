@@ -161,18 +161,35 @@ make_EHelper(mul) {
   rtl_mul_lo(&s1, &id_dest->val, &s0);
 
   switch (id_dest->width) {
-    case 1:rtl_sr(R_AX, &s1, 2);
+    case 1: {
+      rtl_sr(R_AX, &s1, 2);
+      rtl_shri(&s0, &s1, 8);
+      rtl_andi(&s0, &s0, 0xff);
+      rtl_setrelopi(RELOP_NE, &s0, &s0, 0);
       break;
-    case 2:rtl_sr(R_AX, &s1, 2);
+    }
+    case 2: {
+      rtl_sr(R_AX, &s1, 2);
       rtl_shri(&s1, &s1, 16);
       rtl_sr(R_DX, &s1, 2);
+      rtl_andi(&s0, &s1, 0xffff);
+      rtl_setrelopi(RELOP_NE, &s0, &s0, 0);
       break;
-    case 4:rtl_mul_hi(&s0, &id_dest->val, &s0);
+    }
+    case 4: {
+      rtl_mul_hi(&s0, &id_dest->val, &s0);
       rtl_sr(R_EDX, &s0, 4);
       rtl_sr(R_EAX, &s1, 4);
+      rtl_setrelopi(RELOP_NE, &s0, &s1, 0);
       break;
+    }
     default: assert(0);
   }
+
+  rtl_set_CF(&s0);
+  rtl_set_OF(&s0);
+
+  flag_mask &= (~sf_mask) & (~zf_mask);
 
   print_asm_template1(mul);
 }

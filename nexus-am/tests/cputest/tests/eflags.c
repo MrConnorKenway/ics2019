@@ -79,5 +79,44 @@ int main() {
   asm("imul %cx");
   asm("imul %ecx");
 
+  asm("mov $0xffffffff, %edx");
+  asm("mov $0xffffffff, %eax");
+  asm("mul %edx");
+  asm("mov $0x7fffffff, %edx");
+  asm("mov $0xffffffff, %eax");
+  asm("mul %edx");
+  asm("mov $0x80000000, %edx");
+  asm("mov $0xffffffff, %eax");
+  asm("mul %edx");
+  asm("mov $0x7fffffff, %edx");
+  asm("mov $0x7fffffff, %eax");
+  asm("mul %edx");
+
+  asm("mov $0xffff, %dx");
+  asm("mov $0xffff, %ax");
+  asm("mul %dx");
+  asm("mov $0x7fff, %dx");
+  asm("mov $0xffff, %ax");
+  asm("mul %dx");
+  asm("mov $0x8000, %dx");
+  asm("mov $0xffff, %ax");
+  asm("mul %dx");
+  asm("mov $0x7fff, %dx");
+  asm("mov $0x7fff, %ax");
+  asm("mul %dx");
+
+  asm("mov $0xff, %dl");
+  asm("mov $0xff, %al");
+  asm("mul %dl");
+  asm("mov $0x7f, %dl");
+  asm("mov $0xff, %al");
+  asm("mul %dl");
+  asm("mov $0x80, %dl");
+  asm("mov $0xff, %al");
+  asm("mul %dl");
+  asm("mov $0x7f, %dl");
+  asm("mov $0x7f, %al");
+  asm("mul %dl");
+
   return 0;
 }
