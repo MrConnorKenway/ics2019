@@ -21,7 +21,12 @@ void rtl_setcc(rtlreg_t *dest, uint8_t subcode) {
       rtl_setrelopi(RELOP_EQ, dest, &t0, 1);
       break;
     }
-    case CC_BE:
+    case CC_BE: {
+      rtl_get_ZF(&t0);
+      rtl_get_CF(&t1);
+      rtl_or(dest, &t0, &t1);
+      break;
+    }
     case CC_S:
     case CC_L: {
       rtl_get_SF(&t0);
