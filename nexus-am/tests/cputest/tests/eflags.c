@@ -62,5 +62,22 @@ int main() {
   asm("mov $0x80000000, %edx");
   asm("imul %ecx, %edx");
 
+  asm("mov $0xffffffff, %eax");
+  asm("mov $0xffffffff, %ecx");
+  asm("imul %cl");
+  asm("imul %cx");
+  asm("imul %ecx");
+  asm("mov $0x80000000, %ecx");
+  asm("imul %ecx");
+  asm("mov $0x8000, %ecx");
+  asm("imul %ecx");
+  asm("imul %cx");
+  asm("mov $0x80, %ecx");
+  asm("imul %cl");
+  asm("mov $0x80000000, %eax");
+  asm("imul %cl");
+  asm("imul %cx");
+  asm("imul %ecx");
+
   return 0;
 }

@@ -180,21 +180,45 @@ make_EHelper(mul) {
 // imul with one operand
 make_EHelper(imul1) {
   rtl_lr(&s0, R_EAX, id_dest->width);
+  rtl_sext(&s0, &s0, id_dest->width);
+  rtl_sext(&id_dest->val, &id_dest->val, id_dest->width);
   rtl_imul_lo(&s1, &id_dest->val, &s0);
 
   switch (id_dest->width) {
-    case 1:rtl_sr(R_AX, &s1, 2);
+    case 1: {
+      rtl_sr(R_AX, &s1, 2);
+      rtl_shri(&s0, &s1, 8);
+      rtl_sext(&s0, &s0, 1);
+      rtl_sext(&s1, &s1, 2);
+      rtl_sari(&s1, &s1, 8);
+      rtl_setrelop(RELOP_NE, &s1, &s0, &s1);
       break;
-    case 2:rtl_sr(R_AX, &s1, 2);
+    }
+    case 2: {
+      rtl_sr(R_AX, &s1, 2);
+      rtl_shli(&s0, &s1, 16);
+      rtl_sari(&s0, &s0, 31);
       rtl_shri(&s1, &s1, 16);
       rtl_sr(R_DX, &s1, 2);
+      rtl_sext(&s1, &s1, 2);
+      rtl_setrelop(RELOP_NE, &s1, &s0, &s1);
       break;
-    case 4:rtl_imul_hi(&s0, &id_dest->val, &s0);
+    }
+    case 4: {
+      rtl_imul_hi(&s0, &id_dest->val, &s0);
       rtl_sr(R_EDX, &s0, 4);
       rtl_sr(R_EAX, &s1, 4);
+      rtl_sari(&s1, &s1, 31);
+      rtl_setrelop(RELOP_NE, &s1, &s0, &s1);
       break;
+    }
     default: assert(0);
   }
+
+  rtl_set_CF(&s1);
+  rtl_set_OF(&s1);
+
+  flag_mask &= (~sf_mask) & (~zf_mask);
 
   print_asm_template1(imul);
 }
