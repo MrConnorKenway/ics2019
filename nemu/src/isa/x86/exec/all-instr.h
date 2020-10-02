@@ -52,6 +52,8 @@ make_EHelper(jmp_rm);
 make_EHelper(ret);
 make_EHelper(leave);
 
+make_EHelper(out);
+
 make_EHelper(nop);
 make_EHelper(inv);
 make_EHelper(nemu_trap);
