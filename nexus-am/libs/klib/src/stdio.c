@@ -3,10 +3,6 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
-int printf(const char *fmt, ...) {
-  return 0;
-}
-
 static void printnum(void (*putch)(int, void *), void *putbuf, unsigned long long num, unsigned base) {
   if (num >= base) {
     printnum(putch, putbuf, num / base, base);
@@ -50,6 +46,22 @@ void vprintfmt(void (*putch)(int, void *), void *putbuf, const char *fmt, va_lis
       }
     }
   }
+}
+
+void putchar(int c, int *cnt) {
+  _putc(c);
+  ++cnt;
+}
+
+int printf(const char *fmt, ...) {
+  va_list ap;
+  int rc;
+
+  va_start(ap, fmt);
+  vprintfmt((void *) putchar, &rc, fmt, ap);
+  va_end(ap);
+
+  return rc;
 }
 
 struct sprintbuf {
