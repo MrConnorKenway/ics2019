@@ -30,6 +30,8 @@ void __am_video_init() {
   SDL_SetWindowTitle(window, "Native Application");
   texture = SDL_CreateTexture(renderer,
     SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, W, H);
+  SDL_GLContext context = SDL_GL_CreateContext(window);
+  SDL_GL_MakeCurrent(window, context);
   memset(fb, 0, W * H * sizeof(uint32_t));
   SDL_AddTimer(1000 / FPS, texture_sync, NULL);
 }
