@@ -35,6 +35,7 @@ make_EHelper(shl);
 make_EHelper(shr);
 
 make_EHelper(cltd);
+make_EHelper(cwtl);
 
 make_EHelper(cmp);
 make_EHelper(setcc);
