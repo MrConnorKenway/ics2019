@@ -119,6 +119,21 @@ make_EHelper(shr) {
   print_asm_template2(shr);
 }
 
+make_EHelper(rol) {
+  rtl_andi(&s0, &id_src->val, 0x1f);
+  rtl_li(&s1, 32);
+  rtl_sub(&s1, &s1, &s0);
+  rtl_shr(&s1, &id_dest->val, &s1);
+  rtl_shl(&s0, &id_dest->val, &s0);
+  rtl_or(&s0, &s0, &s1);
+
+  flag_mask &= (~cf_mask) & (~of_mask);
+
+  operand_write(id_dest, &s0);
+
+  print_asm_template2(rol);
+}
+
 make_EHelper(setcc) {
   uint32_t cc = decinfo.opcode & 0xf;
 

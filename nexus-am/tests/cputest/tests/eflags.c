@@ -51,6 +51,10 @@ int main() {
   asm("sar %cl, %eax");
   asm("shl %cl, %eax");
 
+  asm("mov $0xf1234567, %eax");
+  asm("mov $78, %cl");
+  asm("rol %cl, %eax");
+
   asm("mov $0xffff, %eax");
   asm("sar $8, %ax");
 
