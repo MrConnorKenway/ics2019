@@ -1,4 +1,13 @@
 int main() {
+  asm("mov $-1, %eax");
+  asm("neg %eax");
+
+  asm("mov $0x80000000, %eax");
+  asm("neg %eax");
+
+  asm("xor %eax, %eax");
+  asm("neg %eax");
+
   asm("mov $0x12ae, %cx");
   asm("sub $0x12af, %cx");
 
