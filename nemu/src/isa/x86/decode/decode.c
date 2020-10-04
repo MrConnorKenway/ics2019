@@ -198,6 +198,7 @@ make_DHelper(SI2E) {
   decode_op_SI(pc, id_src, true);
   if (id_dest->width == 2) {
     id_src->val &= 0xffff;
+    print_Dop(id_src->str, OP_STR_SIZE, "$0x%x", id_src->val);
   }
 }
 
