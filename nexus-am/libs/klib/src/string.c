@@ -10,6 +10,14 @@ size_t strlen(const char *s) {
   return n;
 }
 
+size_t strnlen(const char *s, size_t size) {
+  size_t n;
+  for (n = 0; size > 0 && *s != 0; ++s, --size) {
+    ++n;
+  }
+  return n;
+}
+
 char *strcpy(char *dst, const char *src) {
   char *ret = dst;
   while ((*dst++ = *src++) != 0);
