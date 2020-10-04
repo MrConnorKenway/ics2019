@@ -38,15 +38,14 @@ make_EHelper(leave) {
 }
 
 make_EHelper(cltd) {
-  rtl_setrelopi(RELOP_LT, &s0, &id_dest->val, 0);
-  rtl_li(&s2, 0);
   if (decinfo.isa.is_operand_size_16) {
-    rtl_li(&s1, 0xffff);
-    rtl_mux(&s0, &s0, &s1, &s2);
+    rtl_lr(&s0, R_EAX, 2);
+    rtl_sext(&s0, &s0, 2);
+    rtl_sari(&s0, &s0, 16);
     rtl_sr(R_EDX, &s0, 2);
   } else {
-    rtl_li(&s1, 0xffffffff);
-    rtl_mux(&s0, &s0, &s1, &s2);
+    rtl_lr(&s0, R_EAX, 4);
+    rtl_sari(&s0, &s0, 31);
     rtl_sr(R_EDX, &s0, 4);
   }
 
