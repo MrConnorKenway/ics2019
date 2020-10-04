@@ -42,6 +42,9 @@ int main() {
   asm("sar %cl, %eax");
   asm("shl %cl, %eax");
 
+  asm("mov $0xffff, %eax");
+  asm("sar $8, %ax");
+
   asm("mov $0xffff, %cx");
   asm("mov $0x8000, %dx");
   asm("imul %cx, %dx");

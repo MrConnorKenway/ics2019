@@ -62,7 +62,8 @@ make_EHelper(sar) {
   rtl_xori(&s1, &s1, 1);
   rtl_or(&s2, &s2, &s1);
 
-  rtl_sar(&s0, &id_dest->val, &id_src->val);
+  rtl_sext(&s0, &id_dest->val, id_dest->width);
+  rtl_sar(&s0, &s0, &id_src->val);
 
   // unnecessary to update CF and OF in NEMU
   flag_mask &= (~cf_mask) & (~of_mask);
