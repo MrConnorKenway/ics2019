@@ -34,7 +34,9 @@ void rtl_setcc(rtlreg_t *dest, uint8_t subcode) {
       break;
     }
     case CC_S: {
-      TODO();
+      rtl_get_SF(&t0);
+      rtl_mv(dest, &t0);
+      break;
     }
     case CC_L: {
       rtl_get_SF(&t0);
