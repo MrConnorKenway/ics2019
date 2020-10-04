@@ -10,8 +10,9 @@ const uint32_t cf_mask = 1u << 0;
 const uint32_t zf_mask = 1u << 6;
 const uint32_t sf_mask = 1u << 7;
 const uint32_t if_mask = 1u << 9;
+const uint32_t df_mask = 1u << 10;
 const uint32_t of_mask = 1u << 11;
-uint32_t flag_mask = cf_mask | zf_mask | sf_mask | if_mask | of_mask;
+uint32_t flag_mask = cf_mask | zf_mask | sf_mask | if_mask | df_mask | of_mask;
 
 void reg_test() {
   srand(time(0));
@@ -57,6 +58,7 @@ void isa_reg_display() {
   printf("ZF\t%d\n", cpu.ZF);
   printf("SF\t%d\n", cpu.SF);
   printf("IF\t%d\n", cpu.IF);
+  printf("DF\t%d\n", cpu.DF);
   printf("eip\t0x%08x\t%d\n", cpu.pc, cpu.pc);
 }
 

@@ -94,7 +94,7 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
     nemu_state.state = NEMU_ABORT;
     nemu_state.halt_pc = pc;
   }
-  flag_mask = cf_mask | zf_mask | sf_mask | if_mask | of_mask;
+  flag_mask = cf_mask | zf_mask | sf_mask | if_mask | df_mask | of_mask;
   cpu.eflags = ref->eflags;
 }
 

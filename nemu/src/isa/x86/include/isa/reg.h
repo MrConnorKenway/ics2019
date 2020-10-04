@@ -20,6 +20,7 @@ extern const uint32_t cf_mask;
 extern const uint32_t zf_mask;
 extern const uint32_t sf_mask;
 extern const uint32_t if_mask;
+extern const uint32_t df_mask;
 extern const uint32_t of_mask;
 extern uint32_t flag_mask;
 
@@ -53,7 +54,7 @@ typedef struct {
       uint8_t SF: 1;
       uint8_t : 1;
       uint8_t IF: 1;
-      uint8_t : 1;
+      uint8_t DF: 1;
       uint8_t OF: 1;
       uint32_t : 20;
     };

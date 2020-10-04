@@ -5,6 +5,41 @@ make_EHelper(mov) {
   print_asm_template2(mov);
 }
 
+make_EHelper(movs) {
+  rtl_lr(&s0, R_ESI, 4);
+  rtl_lm(&id_src->val, &s0, id_dest->width);
+
+  rtl_lr(&s1, R_EDI, 4);
+  rtl_sm(&s1, &id_src->val, id_dest->width);
+
+  if (cpu.DF == 0) {
+    rtl_addi(&s0, &s0, id_dest->width);
+    rtl_addi(&s1, &s1, id_dest->width);
+  } else {
+    rtl_subi(&s0, &s0, id_dest->width);
+    rtl_subi(&s1, &s1, id_dest->width);
+  }
+
+  rtl_sr(R_ESI, &s0, 4);
+  rtl_sr(R_EDI, &s1, 4);
+
+  switch (id_dest->width) {
+    case 1: {
+      print_asm("movsb");
+      break;
+    }
+    case 2: {
+      print_asm("movsw");
+      break;
+    }
+    case 4: {
+      print_asm("movsd");
+      break;
+    }
+    default:assert(0);
+  }
+}
+
 make_EHelper(push) {
   rtl_push(&id_dest->val);
 
