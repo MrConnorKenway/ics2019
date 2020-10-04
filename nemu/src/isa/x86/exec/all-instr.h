@@ -18,6 +18,7 @@ make_EHelper(sub);
 
 make_EHelper(mul);
 
+make_EHelper(imul3);
 make_EHelper(imul2);
 make_EHelper(imul1);
 
