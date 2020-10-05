@@ -25,7 +25,7 @@ void vprintfmt(void (*putch)(int, void *), void *putbuf, const char *fmt, va_lis
   const char *ptr;
   unsigned long long num;
   char padc;
-  int width, precision;
+  int base, width, precision;
 
   while (1) {
     while ((c = *fmt++) != '%') {
@@ -77,6 +77,11 @@ void vprintfmt(void (*putch)(int, void *), void *putbuf, const char *fmt, va_lis
         goto reswitch;
       }
 
+      case 'c': {
+        putch(va_arg(ap, int), putbuf);
+        break;
+      }
+
       case 's': {
         if ((ptr = va_arg(ap, char*)) == NULL) {
           ptr = "(null)";
@@ -97,13 +102,23 @@ void vprintfmt(void (*putch)(int, void *), void *putbuf, const char *fmt, va_lis
 
       case 'd': {
         num = va_arg(ap, int);
-        if (num < 0) {
+        if ((long long) num < 0) {
           putch('-', putbuf);
           num = -(long long) num;
         }
-        printnum(putch, putbuf, num, 10, width, padc);
-        break;
+        base = 10;
+        goto number;
       }
+
+      case 'x': {
+        num = va_arg(ap, unsigned int);
+        base = 16;
+        goto number;
+      }
+
+      number:
+        printnum(putch, putbuf, num, base, width, padc);
+        break;
     }
   }
 }
