@@ -181,10 +181,10 @@ static inline void rtl_mux(rtlreg_t *dest, const rtlreg_t *cond, const rtlreg_t 
   rtl_shli(&t0, cond, 31);
   rtl_sari(&t0, &t0, 31);
   rtl_not(&t1, &t0);
-  rtl_li(dest, 0);
   rtl_and(&t0, &t0, src1);
-  rtl_or(dest, dest, &t0);
   rtl_and(&t1, &t1, src2);
+  rtl_li(dest, 0);
+  rtl_or(dest, dest, &t0);
   rtl_or(dest, dest, &t1);
 }
 

@@ -1,4 +1,8 @@
 int main() {
+  asm("mov $0, %eax");
+  asm("mov $0, %ecx");
+  asm("sar %ecx, %eax");
+
   asm("mov $-1, %eax");
   asm("neg %eax");
 
