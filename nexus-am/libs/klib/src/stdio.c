@@ -110,6 +110,14 @@ void vprintfmt(void (*putch)(int, void *), void *putbuf, const char *fmt, va_lis
         goto number;
       }
 
+      case 'p': {
+        putch('0', putbuf);
+        putch('x', putbuf);
+        num = (unsigned long long) (uintptr_t) va_arg(ap, void *);
+        base = 16;
+        goto number;
+      }
+
       case 'x': {
         num = va_arg(ap, unsigned int);
         base = 16;
