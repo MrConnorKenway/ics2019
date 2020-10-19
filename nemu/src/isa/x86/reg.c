@@ -53,13 +53,32 @@ void isa_reg_display() {
   for (i = R_EAX; i <= R_EDI; i++) {
     printf("%s\t0x%08x\t%d\n", regsl[i], reg_l(i), reg_l(i));
   }
-  printf("CF\t%d\n", cpu.CF);
-  printf("OF\t%d\n", cpu.OF);
-  printf("ZF\t%d\n", cpu.ZF);
-  printf("SF\t%d\n", cpu.SF);
-  printf("IF\t%d\n", cpu.IF);
-  printf("DF\t%d\n", cpu.DF);
   printf("eip\t0x%08x\t%d\n", cpu.pc, cpu.pc);
+  printf("eflags\t0x%x\t\t", cpu.eflags);
+  if ((cpu.eflags & flag_mask) != 0) {
+    printf("[");
+    if (cpu.CF == 1) {
+      printf(" CF");
+    }
+    if (cpu.ZF == 1) {
+      printf(" ZF");
+    }
+    if (cpu.SF == 1) {
+      printf(" SF");
+    }
+    if (cpu.IF == 1) {
+      printf(" IF");
+    }
+    if (cpu.DF == 1) {
+      printf(" DF");
+    }
+    if (cpu.OF == 1) {
+      printf(" OF");
+    }
+    printf(" ]");
+  }
+  printf("\n");
+  printf("cs\t0x%04x\n", cpu.cs);
 }
 
 uint32_t isa_reg_str2val(const char *s, bool *success) {
