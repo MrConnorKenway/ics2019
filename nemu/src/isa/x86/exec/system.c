@@ -1,7 +1,21 @@
 #include "cpu/exec.h"
 
 make_EHelper(lidt) {
-  TODO();
+  rtl_lm(&s0, &id_dest->addr, 2);
+  rtl_mv(&cpu.IDTR.limit, &s0);
+  rtl_addi(&s0, &id_dest->addr, 2);
+  rtl_lm(&s1, &s0, 4);
+  switch (id_dest->width) {
+    case 2: {
+      rtl_andi(&s1, &s1, 0xffffff);
+      break;
+    }
+    case 4: {
+      break;
+    }
+    default:assert(0);
+  }
+  rtl_mv(&cpu.IDTR.base, &s1);
 
   print_asm_template1(lidt);
 }
