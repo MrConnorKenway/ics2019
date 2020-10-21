@@ -1,5 +1,7 @@
-#include "common.h"
 #include "syscall.h"
+
+#include "common.h"
+#include "fs.h"
 
 _Context* do_syscall(_Context *c) {
   uintptr_t a[4];
@@ -11,6 +13,14 @@ _Context* do_syscall(_Context *c) {
   switch (a[0]) {
     case SYS_exit: _halt(a[1]);
     case SYS_yield: _yield(); c->GPRx = 0; break;
+    case SYS_open: {
+      c->GPRx = fs_open((const char *)a[1], a[2], a[3]);
+      break;
+    }
+    case SYS_read: {
+      c->GPRx = fs_read(a[1], (void *)a[2], a[3]);
+      break;
+    }
     case SYS_write: {
       int fd = a[1];
       size_t count = a[3];
@@ -20,9 +30,17 @@ _Context* do_syscall(_Context *c) {
           _putc(((uint8_t *) buf)[i]);
         }
         c->GPRx = count;
-      } else {
-        panic("Unsupported fd %d", fd);
+      } else if (fd > 2) {
+        c->GPRx = fs_write(fd, (void *)a[2], a[3]);
       }
+      break;
+    }
+    case SYS_close: {
+      c->GPRx = fs_close(a[1]);
+      break;
+    }
+    case SYS_lseek: {
+      c->GPRx = fs_lseek(a[1], a[2], a[3]);
       break;
     }
     case SYS_brk: {

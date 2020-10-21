@@ -9,6 +9,7 @@ typedef struct {
   size_t disk_offset;
   ReadFn read;
   WriteFn write;
+  size_t open_offset;
 } Finfo;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
@@ -35,4 +36,71 @@ static Finfo file_table[] __attribute__((used)) = {
 
 void init_fs() {
   // TODO: initialize the size of /dev/fb
+}
+
+int fs_open(const char *pathname, int flags, int mode) {
+  size_t fd = 3;
+  for (; fd < NR_FILES; ++fd) {
+    if (pathname != NULL && strcmp(file_table[fd].name, pathname) == 0) {
+      break;
+    }
+  }
+  if (fd >= NR_FILES) {
+    panic("File %s does not exist", pathname);
+  }
+  return fd;
+}
+
+size_t ramdisk_read(void *, size_t, size_t);
+size_t ramdisk_write(const void *, size_t, size_t);
+
+size_t fs_read(int fd, void *buf, size_t len) {
+  if (file_table[fd].read) {
+    return file_table[fd].read(buf, file_table[fd].disk_offset, len);
+  }
+  if (file_table[fd].open_offset + len > file_table[fd].size) {
+    len = file_table[fd].size - file_table[fd].open_offset;
+  }
+  ramdisk_read(buf, file_table[fd].disk_offset + file_table[fd].open_offset,
+               len);
+  file_table[fd].open_offset += len;
+  return len;
+}
+
+size_t fs_write(int fd, const void *buf, size_t len) {
+  if (file_table[fd].write) {
+    return file_table[fd].write(buf, file_table[fd].disk_offset, len);
+  }
+  if (file_table[fd].open_offset + len > file_table[fd].size) {
+    len = file_table[fd].size - file_table[fd].open_offset;
+  }
+  ramdisk_write(buf, file_table[fd].disk_offset + file_table[fd].open_offset,
+                len);
+  file_table[fd].open_offset += len;
+  return len;
+}
+
+size_t fs_lseek(int fd, size_t offset, int whence) {
+  switch (whence) {
+    case SEEK_SET:
+      file_table[fd].open_offset = offset;
+      break;
+
+    case SEEK_CUR:
+      file_table[fd].open_offset += offset;
+      break;
+
+    case SEEK_END:
+      file_table[fd].open_offset = file_table[fd].size + offset;
+      break;
+
+    default:
+      panic("Unknown whence: %d", whence);
+  }
+  return file_table[fd].open_offset;
+}
+
+int fs_close(int fd) {
+  file_table[fd].open_offset = 0;
+  return 0;
 }

@@ -1,5 +1,7 @@
-#include "proc.h"
 #include <elf.h>
+
+#include "fs.h"
+#include "proc.h"
 
 #ifdef __ISA_AM_NATIVE__
 # define Elf_Ehdr Elf64_Ehdr
@@ -9,20 +11,21 @@
 # define Elf_Phdr Elf32_Phdr
 #endif
 
-size_t ramdisk_read(void *, size_t, size_t);
-
 static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr elf_ehdr;
-  ramdisk_read(&elf_ehdr, 0, sizeof(elf_ehdr));
+  int fd = fs_open(filename, 0, 0);
+  fs_read(fd, &elf_ehdr, sizeof(elf_ehdr));
   if (strncmp((const char *) elf_ehdr.e_ident, ELFMAG, SELFMAG) != 0) {
     panic("Not an ELF file - it has the wrong magic bytes at the start");
   }
   Elf_Phdr elf_ph[elf_ehdr.e_phnum];
-  ramdisk_read(&elf_ph, elf_ehdr.e_phoff, sizeof(elf_ph));
+  fs_lseek(fd, elf_ehdr.e_phoff, SEEK_SET);
+  fs_read(fd, &elf_ph, sizeof(elf_ph));
   Elf_Phdr *ph = &elf_ph[0], *eph = ph + elf_ehdr.e_phnum;
   for (; ph < eph; ++ph) {
     if (ph->p_type == PT_LOAD) {
-      ramdisk_read((uint8_t *) ph->p_vaddr, ph->p_offset, ph->p_memsz);
+      fs_lseek(fd, ph->p_offset, SEEK_SET);
+      fs_read(fd, (uint8_t *) ph->p_vaddr, ph->p_memsz);
       memset((uint8_t *) ph->p_vaddr + ph->p_filesz, 0, ph->p_memsz - ph->p_filesz);
     }
   }
