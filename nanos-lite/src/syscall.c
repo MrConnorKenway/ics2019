@@ -22,17 +22,7 @@ _Context* do_syscall(_Context *c) {
       break;
     }
     case SYS_write: {
-      int fd = a[1];
-      size_t count = a[3];
-      if (fd == 1 || fd == 2) {
-        uint8_t *buf = (uint8_t *) a[2];
-        for (size_t i = 0; i < count; ++i) {
-          _putc(((uint8_t *) buf)[i]);
-        }
-        c->GPRx = count;
-      } else if (fd > 2) {
-        c->GPRx = fs_write(fd, (void *)a[2], a[3]);
-      }
+      c->GPRx = fs_write(a[1], (void *)a[2], a[3]);
       break;
     }
     case SYS_close: {
