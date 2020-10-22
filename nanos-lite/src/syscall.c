@@ -2,6 +2,9 @@
 
 #include "common.h"
 #include "fs.h"
+#include "proc.h"
+
+void naive_uload(PCB *, const char *);
 
 _Context* do_syscall(_Context *c) {
   uintptr_t a[4];
@@ -36,6 +39,10 @@ _Context* do_syscall(_Context *c) {
     case SYS_brk: {
       c->GPRx = 0;
       break;
+    }
+    case SYS_execve: {
+      naive_uload(NULL, (const char *)a[1]);
+      panic("Should not reach here");
     }
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
