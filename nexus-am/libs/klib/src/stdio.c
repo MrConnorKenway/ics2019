@@ -149,18 +149,21 @@ int printf(const char *fmt, ...) {
 
 struct sprintbuf {
   char *buf;
+  char *ebuf;
   int cnt;
 };
 
 void sprintputch(int c, struct sprintbuf *b) {
   ++b->cnt;
-  *b->buf++ = c;
+  if (b->ebuf == NULL || b->buf < b->ebuf) {
+    *b->buf++ = c;
+  }
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
   assert(out != NULL);
 
-  struct sprintbuf b = {out, 0};
+  struct sprintbuf b = {out, NULL, 0};
   vprintfmt((void *) sprintputch, &b, fmt, ap);
   *b.buf = 0;
   return b.cnt;
@@ -177,8 +180,29 @@ int sprintf(char *out, const char *fmt, ...) {
   return rc;
 }
 
+int vsnprintf(char *buf, size_t n, const char *fmt, va_list ap) {
+  struct sprintbuf b = {buf, buf + n - 1, 0};
+
+  if (buf == NULL || n < 1) return -1;
+
+  // print the string to the buffer
+  vprintfmt((void *)sprintputch, &b, fmt, ap);
+
+  // null terminate the buffer
+  *b.buf = '\0';
+
+  return b.cnt;
+}
+
 int snprintf(char *out, size_t n, const char *fmt, ...) {
-  return 0;
+  va_list ap;
+  int rc;
+
+  va_start(ap, fmt);
+  rc = vsnprintf(out, n, fmt, ap);
+  va_end(ap);
+
+  return rc;
 }
 
 #endif
