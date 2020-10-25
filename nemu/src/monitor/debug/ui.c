@@ -9,6 +9,8 @@
 #include <readline/history.h>
 
 void cpu_exec(uint64_t);
+void difftest_attach();
+void difftest_detach();
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char *rl_gets() {
@@ -182,6 +184,16 @@ static int cmd_d(char *args) {
   return 0;
 }
 
+static int cmd_attach(char *args) {
+  difftest_attach();
+  return 0;
+}
+
+static int cmd_detach(char *args) {
+  difftest_detach();
+  return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -197,7 +209,9 @@ static struct {
     {"p", "p EXPR: Print the value of expression 'EXPR'", cmd_p},
     {"x", "x N EXPR: Examine N words of memory starting at the value of 'EXPR'", cmd_x},
     {"w", "w EXPR: Set watchpoint to stop program when the value of 'EXPR' changed", cmd_w},
-    {"d", "d N: Delete watchpoint N", cmd_d}
+    {"d", "d N: Delete watchpoint N", cmd_d},
+    {"attach", "Enter DiffTest mode", cmd_attach},
+    {"detach", "Exit DiffTest mode", cmd_detach}
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
