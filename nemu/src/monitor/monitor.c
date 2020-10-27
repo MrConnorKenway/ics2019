@@ -5,6 +5,7 @@
 void init_log(const char *log_file);
 void init_isa();
 void init_regex();
+void init_bp_pool();
 void init_wp_pool();
 void init_device();
 void init_difftest(char *ref_so_file, long img_size);
@@ -97,6 +98,9 @@ int init_monitor(int argc, char *argv[]) {
 
   /* Compile the regular expressions. */
   init_regex();
+
+  /* Initialize the breakpoint pool. */
+  init_bp_pool();
 
   /* Initialize the watchpoint pool. */
   init_wp_pool();

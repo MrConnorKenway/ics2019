@@ -1,5 +1,6 @@
 #include "monitor/monitor.h"
 #include "monitor/expr.h"
+#include "monitor/breakpoint.h"
 #include "monitor/watchpoint.h"
 #include "nemu.h"
 
@@ -76,6 +77,8 @@ static int cmd_info(char *args) {
     isa_reg_display();
   } else if (strcmp(arg, "w") == 0) {
     wp_info();
+  } else if (strcmp(arg, "b") == 0) {
+    bp_info();
   } else {
     printf("Unknown argument: '%s'\n", arg);
   }
@@ -158,6 +161,9 @@ static int cmd_w(char *args) {
   }
 
   WP *wp = new_wp();
+  if (wp == NULL) {
+    return 0;
+  }
   wp->expr = (char *) malloc(strlen(args) + 1);
   strcpy(wp->expr, args);
   printf("Watchpoint %d: %s\n", wp->NO, wp->expr);
@@ -165,22 +171,66 @@ static int cmd_w(char *args) {
   return 0;
 }
 
+static int cmd_b(char *args) {
+  if (args == NULL) {
+    printf("Usage: b ADDR\n");
+    return 0;
+  }
+
+  bool success;
+  uint32_t val = expr(args, &success);
+  if (!success) {
+    return 0;
+  }
+
+  BP *bp = new_bp();
+  if (bp == NULL) {
+    return 0;
+  }
+  bp->expr = (char *)malloc(strlen(args) + 1);
+  strcpy(bp->expr, args);
+  printf("Breakpoint %d: %s\n", bp->NO, bp->expr);
+  bp->addr = val;
+  return 0;
+}
+
 static int cmd_d(char *args) {
   if (args == NULL) {
-    printf("Usage: d N\n");
+    printf("Usage: d [w|b] N\n");
+    return 0;
   }
   char *arg = strtok(NULL, " ");
   if (arg == NULL) {
-    printf("Usage: d N\n");
+    printf("Usage: d [w|b] N\n");
+    return 0;
   }
 
+  char mode;
+  if (strcmp(arg, "w") == 0) {
+    mode = 'w';
+  } else if (strcmp(arg, "b") == 0) {
+    mode = 'b';
+  } else {
+    printf("Invalid argument: '%s'\n", arg);
+    return 0;
+  }
+
+  arg = strtok(NULL, " ");
+  if (arg == NULL) {
+    printf("Usage: d [w|b] N\n");
+    return 0;
+  }
   char *endptr;
   long n = strtol(arg, &endptr, 0);
   if (n < 0 || *endptr != 0 || errno == ERANGE) {
     printf("Invalid argument: '%s'\n", arg);
     return 0;
   }
-  free_wp((int) n);
+  if (mode == 'w') {
+    free_wp((int)n);
+  } else {
+    free_bp((int) n);
+  }
   return 0;
 }
 
@@ -205,11 +255,14 @@ static struct {
 
     /* TODO: Add more commands */
     {"si", "si [N]: Execute N machine instructions, then stop and return to the debugger", cmd_si},
-    {"info", "\n\tinfo r: Display register status\n\tinfo w: Print watchpoint info", cmd_info},
+    {"info", "info r: Display register status\n\t"
+             "info w: Print watchpoint info\n\t"
+             "info b: Print breakpoint info", cmd_info},
     {"p", "p EXPR: Print the value of expression 'EXPR'", cmd_p},
     {"x", "x N EXPR: Examine N words of memory starting at the value of 'EXPR'", cmd_x},
+    {"b", "b ADDR: Set breakpoint at specified location", cmd_b},
     {"w", "w EXPR: Set watchpoint to stop program when the value of 'EXPR' changed", cmd_w},
-    {"d", "d N: Delete watchpoint N", cmd_d},
+    {"d", "d w N: Delete watchpoint N\n    d b N: Delete breakpoint N", cmd_d},
     {"attach", "Enter DiffTest mode", cmd_attach},
     {"detach", "Exit DiffTest mode", cmd_detach}
 };

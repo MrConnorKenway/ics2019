@@ -1,5 +1,6 @@
 #include "nemu.h"
 #include "monitor/monitor.h"
+#include "monitor/breakpoint.h"
 #include "monitor/watchpoint.h"
 
 /* The assembly code of instructions executed is only output to the screen
@@ -66,7 +67,7 @@ void cpu_exec(uint64_t n) {
     g_nr_guest_instr++;
 
     /* TODO: check watchpoints here. */
-    if (check_wp()) {
+    if (check_wp() || check_bp(cpu.pc)) {
       printf("NEMU stops at 0x%08x\n", cpu.pc);
       break;
     }
