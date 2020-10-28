@@ -244,6 +244,66 @@ static int cmd_detach(char *args) {
   return 0;
 }
 
+static int cmd_save(char *args) {
+  if (args == NULL) {
+    printf("Usage: save PATH\n");
+    return 0;
+  }
+
+  char *path = strtok(NULL, " ");
+  if (path == NULL) {
+    printf("Usage: save PATH\n");
+    return 0;
+  }
+
+  FILE *snapshot = fopen(path, "w+");
+  if (!snapshot) {
+    printf("Failed to open snapshot '%s': %s\n", path, strerror(errno));
+    return 0;
+  }
+  if (fwrite(&cpu, sizeof(cpu), 1, snapshot) == 0) {
+    printf("Failed to save snapshot '%s': %s\n", path, strerror(errno));
+    return 0;
+  }
+  if (fwrite(pmem, PMEM_SIZE, 1, snapshot) == 0) {
+    printf("Failed to save snapshot '%s': %s\n", path, strerror(errno));
+    return 0;
+  }
+  fclose(snapshot);
+  return 0;
+}
+
+static int cmd_load(char *args) {
+  if (args == NULL) {
+    printf("Usage: load PATH\n");
+    return 0;
+  }
+
+  char *path = strtok(NULL, " ");
+  if (path == NULL) {
+    printf("Usage: load PATH\n");
+    return 0;
+  }
+
+  FILE *snapshot = fopen(path, "r");
+  if (!snapshot) {
+    printf("Failed to open snapshot '%s': %s\n", path, strerror(errno));
+    return 0;
+  }
+  if (fread(&cpu, sizeof(cpu), 1, snapshot) == 0) {
+    printf("Failed to load content of snapshot '%s': %s\n", path,
+           strerror(errno));
+    return 0;
+  }
+  if (fread(pmem, PMEM_SIZE, 1, snapshot) == 0) {
+    printf("Failed to load content of snapshot '%s': %s\n", path,
+           strerror(errno));
+    return 0;
+  }
+  fclose(snapshot);
+  return 0;
+}
+
 static struct {
   char *name;
   char *description;
@@ -264,7 +324,9 @@ static struct {
     {"w", "w EXPR: Set watchpoint to stop program when the value of 'EXPR' changed", cmd_w},
     {"d", "d w N: Delete watchpoint N\n    d b N: Delete breakpoint N", cmd_d},
     {"attach", "Enter DiffTest mode", cmd_attach},
-    {"detach", "Exit DiffTest mode", cmd_detach}
+    {"detach", "Exit DiffTest mode", cmd_detach},
+    {"save", "save PATH: Save snapshot", cmd_save},
+    {"load", "load PATH: Load snapshot", cmd_load}
 };
 
 #define NR_CMD (sizeof(cmd_table) / sizeof(cmd_table[0]))
