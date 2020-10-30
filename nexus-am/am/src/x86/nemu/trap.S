@@ -12,9 +12,7 @@ __am_asm_trap:
   pushl %esp
   call __am_irq_handle
 
-  addl $4, %esp
-
-  addl $4, %esp
+  lea 0x4(%eax), %esp
   popal
   addl $4, %esp
 

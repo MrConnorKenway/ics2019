@@ -2,6 +2,7 @@
 #include "syscall.h"
 
 _Context* do_syscall(_Context *);
+_Context* schedule(_Context *);
 
 static _Context* do_event(_Event e, _Context* c) {
   switch (e.event) {
@@ -9,7 +10,7 @@ static _Context* do_event(_Event e, _Context* c) {
       do_syscall(c);
       break;
     }
-    case _EVENT_YIELD: printf("_EVENT_YIELD\n"); break;
+    case _EVENT_YIELD: return schedule(c);
     default: panic("Unhandled event ID = %d", e.event);
   }
 
