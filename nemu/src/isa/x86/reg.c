@@ -79,6 +79,8 @@ void isa_reg_display() {
   }
   printf("\n");
   printf("cs\t0x%04x\n", cpu.cs);
+  printf("cr0\t0x%08x\n", cpu.cr0.val);
+  printf("cr3\t0x%08x\n", cpu.cr3.val);
 }
 
 uint32_t isa_reg_str2val(const char *s, bool *success) {

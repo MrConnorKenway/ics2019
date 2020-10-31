@@ -2,6 +2,7 @@
 #define __X86_REG_H__
 
 #include "common.h"
+#include "mmu.h"
 
 #define PC_START IMAGE_START
 
@@ -65,6 +66,8 @@ typedef struct {
     rtlreg_t limit;
     rtlreg_t base;
   } IDTR;
+  CR0 cr0;
+  CR3 cr3;
 
 } CPU_state;
 
