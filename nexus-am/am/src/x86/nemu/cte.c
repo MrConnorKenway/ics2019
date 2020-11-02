@@ -1,5 +1,6 @@
 #include <am.h>
 #include <x86.h>
+#include <stdio.h>
 
 static _Context* (*user_handler)(_Event, _Context*) = NULL;
 
@@ -8,7 +9,11 @@ void __am_vecsys();
 void __am_vectrap();
 void __am_vecnull();
 
+void __am_get_cur_as(_Context *);
+void __am_switch(_Context *);
+
 _Context* __am_irq_handle(_Context *c) {
+  __am_get_cur_as(c);
   _Context *next = c;
   if (user_handler) {
     _Event ev = {0};
@@ -23,7 +28,7 @@ _Context* __am_irq_handle(_Context *c) {
       next = c;
     }
   }
-
+  __am_switch(next);
   return next;
 }
 

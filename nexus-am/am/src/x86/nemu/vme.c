@@ -74,15 +74,31 @@ void __am_get_cur_as(_Context *c) {
 
 void __am_switch(_Context *c) {
   if (vme_enable) {
-    set_cr3(c->as->ptr);
+    if (c->as == NULL) {
+      set_cr3(kpdirs);
+    } else {
+      set_cr3(c->as->ptr);
+    }
     cur_as = c->as;
   }
 }
 
 int _map(_AddressSpace *as, void *va, void *pa, int prot) {
+  PDE *pgdir = (PDE *)as->ptr;
+  PDE pde = pgdir[PDX(va)];
+  if (!(pde & PTE_P)) {
+    pde = pgdir[PDX(va)] = ((PDE)pgalloc_usr(1)) | PTE_P;
+  }
+  PTE *pgtbl = (PTE *)(pde & 0xfffff000);
+  pgtbl[PTX(va)] = PTE_ADDR(pa) | PTE_P;
   return 0;
 }
 
 _Context *_ucontext(_AddressSpace *as, _Area ustack, _Area kstack, void *entry, void *args) {
-  return NULL;
+  _Context *c = (_Context *)ustack.end - 1;
+  c->esp = (uintptr_t)ustack.end;
+  c->eip = (uintptr_t)entry;
+  c->cs = 8;
+  c->as = as;
+  return c;
 }

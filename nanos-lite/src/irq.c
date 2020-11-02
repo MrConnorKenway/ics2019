@@ -7,8 +7,7 @@ _Context* schedule(_Context *);
 static _Context* do_event(_Event e, _Context* c) {
   switch (e.event) {
     case _EVENT_SYSCALL: {
-      do_syscall(c);
-      break;
+      return do_syscall(c);
     }
     case _EVENT_YIELD: return schedule(c);
     default: panic("Unhandled event ID = %d", e.event);

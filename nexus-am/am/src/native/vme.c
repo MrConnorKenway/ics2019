@@ -47,8 +47,7 @@ void __am_switch(_Context *c) {
   if (!vme_enable) return;
 
   _AddressSpace *as = c->as;
-  assert(as != NULL);
-  if (as == cur_as) return;
+  if (as == cur_as || as == NULL) return;
 
   PageMap *pp;
   // munmap all mappings
@@ -77,7 +76,7 @@ int _map(_AddressSpace *as, void *va, void *pa, int prot) {
     // but we do this to catch unexcepted behavior from Nanos-lite
     if (pp->vpn == vpn) {
       printf("check remap: %p -> %p, but previously %p -> %p\n", va, pa, pp->vpn << PGSHIFT, pp->ppn << PGSHIFT);
-      assert(pp->ppn == ((uintptr_t)pa >> PGSHIFT));
+      // assert(pp->ppn == ((uintptr_t)pa >> PGSHIFT));
       return 0;
     }
   }
