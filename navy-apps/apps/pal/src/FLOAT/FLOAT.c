@@ -3,14 +3,19 @@
 #include <assert.h>
 
 FLOAT F_mul_F(FLOAT a, FLOAT b) {
-  assert(0);
-  return 0;
+  long long A = a, B = b;
+  return (A * B) >> 16;
 }
 
 FLOAT F_div_F(FLOAT a, FLOAT b) {
-  assert(0);
-  return 0;
+  return (a / b) << 16;
 }
+
+typedef struct {
+  unsigned fraction: 23;
+  unsigned exponent: 8;
+  int sign: 1;
+} float_format;
 
 FLOAT f2F(float a) {
   /* You should figure out how to convert `a' into FLOAT without
@@ -22,14 +27,19 @@ FLOAT f2F(float a) {
    * stack. How do you retrieve it to another variable without
    * performing arithmetic operations on it directly?
    */
-
-  assert(0);
-  return 0;
+  float_format *format = (float_format *) (&a);
+  int biased_exponent = format->exponent - 127;
+  int fraction = (1 << 23) | format->fraction;
+  assert(7 - biased_exponent >= 0);
+  FLOAT res = fraction >> (7 - biased_exponent);
+  if (format->sign) {
+    res = -res;
+  }
+  return res;
 }
 
 FLOAT Fabs(FLOAT a) {
-  assert(0);
-  return 0;
+  return (a >= 0) ? a : -a;
 }
 
 /* Functions below are already implemented */
