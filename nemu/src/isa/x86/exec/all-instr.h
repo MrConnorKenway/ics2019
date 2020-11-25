@@ -43,6 +43,7 @@ make_EHelper(sar);
 make_EHelper(shl);
 make_EHelper(shr);
 make_EHelper(rol);
+make_EHelper(shrd);
 
 make_EHelper(cltd);
 make_EHelper(cwtl);

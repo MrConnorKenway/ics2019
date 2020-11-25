@@ -122,6 +122,32 @@ make_EHelper(shr) {
   print_asm_template2(shr);
 }
 
+make_EHelper(shrd) {
+  rtl_get_SF(&s2);
+  rtl_shli(&s2, &s2, id_dest->width * 8 - 1);
+  rtl_get_ZF(&s1);
+  rtl_xori(&s1, &s1, 1);
+  rtl_or(&s2, &s2, &s1);
+
+  rtl_andi(&id_src->val, &id_src->val, 0x1f);
+  rtl_li(&s0, id_dest->width * 8);
+  rtl_sub(&s0, &s0, &id_src->val);
+  rtl_shl(&s0, &id_src2->val, &s0);
+  rtl_shr(&s1, &id_dest->val, &id_src->val);
+  rtl_or(&s0, &s0, &s1);
+
+  // unnecessary to update CF and OF in NEMU
+  flag_mask &= (~cf_mask) & (~of_mask);
+
+  rtl_setrelopi(RELOP_EQ, &s1, &id_src->val, 0);
+  rtl_mux(&s2, &s1, &s2, &s0);
+  rtl_update_ZFSF(&s2, id_dest->width);
+
+  operand_write(id_dest, &s0);
+
+  print_asm_template3(shrd);
+}
+
 make_EHelper(rol) {
   rtl_andi(&s0, &id_src->val, 0x1f);
   rtl_li(&s1, 32);

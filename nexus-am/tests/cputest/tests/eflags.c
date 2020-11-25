@@ -1,4 +1,8 @@
 int main() {
+  asm("mov $0xabcdef, %eax");
+  asm("mov $0x12345678, %edx");
+  asm("shrd $4, %edx, %eax");
+
   asm("mov $0, %eax");
   asm("mov $0, %ecx");
   asm("sar %ecx, %eax");
