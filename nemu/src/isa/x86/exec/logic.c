@@ -63,6 +63,7 @@ make_EHelper(sar) {
   rtl_or(&s2, &s2, &s1);
 
   rtl_sext(&s0, &id_dest->val, id_dest->width);
+  rtl_andi(&id_src->val, &id_src->val, 0x1f);
   rtl_sar(&s0, &s0, &id_src->val);
 
   // unnecessary to update CF and OF in NEMU
@@ -84,6 +85,7 @@ make_EHelper(shl) {
   rtl_xori(&s1, &s1, 1);
   rtl_or(&s2, &s2, &s1);
 
+  rtl_andi(&id_src->val, &id_src->val, 0x1f);
   rtl_shl(&s0, &id_dest->val, &id_src->val);
 
   // unnecessary to update CF and OF in NEMU
@@ -105,6 +107,7 @@ make_EHelper(shr) {
   rtl_xori(&s1, &s1, 1);
   rtl_or(&s2, &s2, &s1);
 
+  rtl_andi(&id_src->val, &id_src->val, 0x1f);
   rtl_shr(&s0, &id_dest->val, &id_src->val);
 
   // unnecessary to update CF and OF in NEMU
